@@ -1,0 +1,60 @@
+Imports AForge
+Imports AForge.Video
+Imports AForge.Video.DirectShow
+Imports System.IO
+Imports System.Drawing.Imaging
+Public Class frmWebCameraSTD
+    Dim CAMEREA As VideoCaptureDevice
+    Dim bmp As Bitmap
+
+
+
+    Private Sub cmdStart_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
+
+    End Sub
+    Private Sub Captured(ByVal sender As Object, ByVal eventArgs As NewFrameEventArgs)
+        bmp = DirectCast(eventArgs.Frame.Clone(), Bitmap)
+        PictureBox1.Image = DirectCast(eventArgs.Frame.Clone(), Bitmap)
+
+    End Sub
+
+
+
+    Private Sub cmdSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdSave.Click
+        Try
+            frmMain.StudentPhoto.Image = PictureBox1.Image
+            CAMEREA.Stop()
+            cmdStop.Enabled = True
+
+        Catch ex As Exception
+
+        End Try
+        
+    End Sub
+
+    Private Sub cmdStop_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdStop.Click
+        Try
+            frmMain.StudentPhoto.Image = frmMain.studentphotouset.Image
+            Dim camera As VideoCaptureDeviceForm = New VideoCaptureDeviceForm
+            If camera.ShowDialog() = Windows.Forms.DialogResult.OK Then
+                CAMEREA = camera.VideoDevice
+                AddHandler CAMEREA.NewFrame, New NewFrameEventHandler(AddressOf Captured)
+                CAMEREA.Start()
+            End If
+            cmdStop.Enabled = False
+        Catch ex As Exception
+
+        End Try
+       
+
+    End Sub
+
+    Private Sub frmWebCameraSTD_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+        Dim camera As VideoCaptureDeviceForm = New VideoCaptureDeviceForm
+        If camera.ShowDialog() = Windows.Forms.DialogResult.OK Then
+            CAMEREA = camera.VideoDevice
+            AddHandler CAMEREA.NewFrame, New NewFrameEventHandler(AddressOf Captured)
+            CAMEREA.Start()
+        End If
+    End Sub
+End Class

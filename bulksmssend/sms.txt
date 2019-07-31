@@ -1,0 +1,121 @@
+Private Sub btnSendSMS_Click(ByVal sender As Object, ByVal e As EventArgs) Handles btnSendSMS.Click
+        'single sms sending panel--==============================>>>>>
+        If RBSingleSMS.Checked = True Then
+            If txtPhone.Text = "" Then
+                MsgBox("??????? ?????? ?? ??????? ?????? ??????? ?????? ????", MsgBoxStyle.Critical, "Alert")
+                txtPhone.Focus()
+            ElseIf txtMessageBody.Text = "" Then
+                MsgBox("??????? ?????? ????? ?????", MsgBoxStyle.Critical, "Alert")
+                txtMessageBody.Focus()
+            ElseIf txtPhone.Text.Length < 11 Then
+                MsgBox("??????? ?????? ????????? ?????? ??????? ?????? ????", MsgBoxStyle.Critical, "Alert")
+                txtPhone.Focus()
+            ElseIf txtPhone.Text.Length > 11 Then
+                MsgBox("??????? ?????? ????????? ?????? ??????? ?????? ????", MsgBoxStyle.Critical, "Alert")
+                txtPhone.Focus()
+            Else
+                If MessageBox.Show("Mr. " & UserName & "," & Chr(13) & "???? ?? ???????? ????? ?????? ???!", " ???????????? ???????", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) = MsgBoxResult.Yes Then
+                    Dim phone_number = txtPhone.Text
+                    Dim sender_id = txtSenderID.Text
+                    Dim message = txtMessageBody.Text
+                    Dim reader As StreamReader
+                    Dim request As WebRequest
+                    Dim response As WebResponse
+                    Dim data As String = ""
+                    Dim api_key = txtApi_Key.Text
+                    Try
+                        request = WebRequest.Create("http://example.com/smsapi?api_key=" + api_key + "&&type=text&contacts=" + phone_number + "&&senderid=" + sender_id + "&&type=unicode&msg=" + message)
+                        request.Timeout = 30000
+                        response = request.GetResponse()
+                        reader = New StreamReader(response.GetResponseStream())
+                        data = reader.ReadToEnd()
+                        If request.Timeout = 30000 Then
+                            MsgBox("Message Sent Successfully", MsgBoxStyle.Information)
+                        End If
+                        If data = 1001 Then
+                            MsgBox("Message sent", MsgBoxStyle.Information, "SMS FEEDBACK")
+                        ElseIf data = 1002 Then
+                            MsgBox("Message not sent", MsgBoxStyle.Information, "SMS FEEDBACK")
+                        ElseIf data = 1003 Then
+                            MsgBox("API Not Found", MsgBoxStyle.Information, "SMS FEEDBACK")
+                        ElseIf data = 1004 Then
+                            MsgBox("SPAM Detected", MsgBoxStyle.Information, "SMS FEEDBACK")
+                        ElseIf data = 1005 Then
+                            MsgBox("Internet error", MsgBoxStyle.Information, "SMS FEEDBACK")
+                        ElseIf data = 1006 Then
+                            MsgBox("Balance Validity Excited", MsgBoxStyle.Information, "SMS FEEDBACK")
+                        ElseIf data = 1007 Then
+                            MsgBox("Balance Insufficient " & vbCrLf & " please contact service providerto purchase SMS Bundle" & vbCrLf & " on ()   ", MsgBoxStyle.Information, "SMS FEEDBACK")
+                        ElseIf data = 1008 Then
+                            MsgBox("Message is empty", MsgBoxStyle.Information, "SMS FEEDBACK")
+                        ElseIf data = 1009 Then
+                            MsgBox("Message Type Not Set (text/unicode)", MsgBoxStyle.Information, "SMS FEEDBACK")
+                        ElseIf data = 1010 Then
+                            MsgBox("Invalid User & Password", MsgBoxStyle.Information, "SMS FEEDBACK")
+                        ElseIf data = 1011 Then
+                            MsgBox("Invalid User Id, ", MsgBoxStyle.Information, "SMS FEEDBACK")
+                        Else
+                            MsgBox("phone number must be more than 8 characters")
+                        End If
+                    Catch ex As Exception
+                        'MsgBox("Error, Please check your internet connection, thank you", MsgBoxStyle.Critical, "Error Alert")
+                        ''    
+                        'MsgBox(ex.Message)
+                    End Try
+                End If
+            End If
+        End If
+
+        'Student Multipale SMS SEndign panel'
+        If RBStudentSMS.Checked = True Then
+            Try
+                If txtMessageBody.Text = "" Then
+                    MsgBox("??????? ?????? ????? ?????", MsgBoxStyle.Critical, "Alert")
+                    txtMessageBody.Focus()
+                Else
+                    If MessageBox.Show("Mr. " & UserName & "," & Chr(13) & "???? ?? ???????? ????? ?????? ???!", "???????????? ???????", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button1) = MsgBoxResult.Yes Then
+                        For i As Integer = DataGridView1.Rows.Count() - 1 To 0 Step -1
+                            Dim phone_number = DataGridView1.Rows(i).Cells(3).Value
+                            Dim sender_id = txtSenderID.Text
+                            Dim message = txtMessageBody.Text
+                            Dim reader As StreamReader
+                            Dim request As WebRequest
+                            Dim response As WebResponse
+                            Dim data As String = ""
+                            Dim api_key = txtApi_Key.Text
+
+                            request = WebRequest.Create("http://example.com/smsapi?api_key=" + api_key + "&&type=text&contacts=" + phone_number + "&&senderid=" + sender_id + "&&type=unicode&msg=" + message)
+                            request.Timeout = 30000
+
+                            response = request.GetResponse()
+                            reader = New StreamReader(response.GetResponseStream())
+                            data = reader.ReadToEnd()
+
+                            ' MsgBox("Message sent")
+                            '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+                            If data = 1801 Then
+                                '''''''''''''''''''''''''''''auto msg''''''''''''''''''''''''''''''''
+                                Dim t As New Threading.Thread(AddressOf closeMsgbox)
+                                t.Start(5) '10 second delay
+                                MsgBox("Sent to " & TextBox9.Text & "")
+                            ElseIf data = 1802 Then
+                                MsgBox("Message not sent", MsgBoxStyle.Information, "SMS FEEDBACK")
+                            ElseIf data = 1803 Then
+                                MsgBox("invalid login phone or password given")
+                            ElseIf data = 1804 Then
+                                MsgBox("You don't have enough balance, " & vbCrLf & " please contact service providerto purchase SMS Bundle" & vbCrLf & " on ()   ", MsgBoxStyle.Information, "SMS FEEDBACK")
+                            ElseIf data = 1805 Then
+                                MsgBox("sender id must be more than 1 charater and less than 12 characters", MsgBoxStyle.Information, "SMS FEEDBACK")
+                            ElseIf data = 1806 Then
+                                MsgBox("You don't have enough balance, " & vbCrLf & " please contact service providerto purchase SMS Bundle" & vbCrLf & " on ()   ", MsgBoxStyle.Information, "SMS FEEDBACK")
+                            Else
+                                MsgBox("phone number must be more than 8 characters")
+                            End If
+                        Next
+                        MsgBox("All messages sent successfully", MsgBoxStyle.Information, "SMS FEEDBACK")
+                    End If
+                End If
+            Catch ex As Exception
+            End Try
+        End If
+    End Sub

@@ -1,0 +1,23 @@
+Public Class frmShotAria
+
+    Private Sub frmShotAria_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+
+
+    End Sub
+
+    Private Sub Button1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles Button1.Click
+        Me.Hide()
+
+        Dim area As Rectangle
+        Dim capture As System.Drawing.Bitmap
+        Dim graph As Graphics
+        area = Me.Bounds
+        capture = New System.Drawing.Bitmap(area.Width, area.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb)
+        graph = Graphics.FromImage(capture)
+        graph.CopyFromScreen(area.X, area.Y, 0, 0, area.Size, CopyPixelOperation.SourceCopy)
+        frmScreenShotMainvb.PictureBox1.Image = capture
+        Me.Hide()
+        frmScreenShotMainvb.ShowDialog()
+
+    End Sub
+End Class

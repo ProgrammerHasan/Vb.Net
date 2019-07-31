@@ -1,0 +1,23 @@
+Public Class frmScreenShotMainvb
+
+    Private Sub cmdShot_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdShot.Click
+        Me.Close()
+
+        frmShotAria.Show()
+      
+    End Sub
+
+    Private Sub cmdSave_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmdSave.Click
+        Dim save As New SaveFileDialog
+        Try
+            save.Title = "Save File"
+            save.FileName = "Screenshot"
+            save.Filter = "Png |*.Png"
+            If save.ShowDialog() = DialogResult.OK Then
+                PictureBox1.Image.Save(save.FileName, System.Drawing.Imaging.ImageFormat.Png)
+            End If
+        Catch ex As Exception
+        End Try
+
+    End Sub
+End Class
